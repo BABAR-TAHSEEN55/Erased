@@ -24,7 +24,7 @@ const MessageComposer = () => {
     "input" | "configure" | "processing" | "result"
   >("input");
   const [setttings, setSettings] = useState(InitialSettings);
-  const [data, setData] = useState();
+  const [data, setData] = useState<{ GENERATE_URL: string }>();
 
   const SendInput = async () => {
     await axios.post("/api/message", { input: message }).then((res) => {
@@ -52,28 +52,6 @@ const MessageComposer = () => {
           </h2>
         </div>
 
-        {/* Main Interface Container */}
-        {/*<div className="bg-void-lighter border border-white/10 rounded-lg overflow-hidden shadow-2xl shadow-neon-purple/5 relative group ">*/}
-        {/* Animated Border Gradient */}
-        {/*<div className="absolute inset-0 bg-gradient-to-r from-neon-green/20 via-neon-purple/20 to-neon-cyan/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" />*/}
-
-        {/* Top Bar */}
-        {/*<div className="h-10 bg-black border-b border-white/10 flex items-center justify-between px-4">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50 animate-bounce delay-75" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50 animate-bounce delay-100" />
-              <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50 animate-bounce delay-150" />
-            </div>
-            <div className="text-[10px] font-mono text-white/50 tracking-widest uppercase">
-              {Step === "input"
-                ? "Awaiting Input"
-                : Step === "configure"
-                  ? "Configuration"
-                  : Step === "processing"
-                    ? "Encrypting..."
-                    : "Secure Link Ready"}
-            </div>
-          </div>*/}
         <CommonComposer
           status={
             Step === "input"
@@ -90,8 +68,6 @@ const MessageComposer = () => {
                 : "green"
           }
         >
-          {/* Composer */}
-          {/*<div className="min-h-[400px] md:min-h-[450px] bg-void p-8">*/}
           {Step === "input" && (
             <div className="flex flex-col h-full animate-in fade-in zoom-in-95 duration-300">
               <textarea
@@ -143,7 +119,7 @@ const MessageComposer = () => {
               <div className="w-full max-w-lg relative">
                 <input
                   readOnly
-                  value={`http://localhost:3000/${data?.GENERATE_URL}`}
+                  value={`http://localhost:3000/composer/${data?.GENERATE_URL}`}
                   className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded focus:outline-none focus:border-neon-green transition-colors"
                 />
                 {/*<button
@@ -171,8 +147,6 @@ const MessageComposer = () => {
         </CommonComposer>
       </div>
     </div>
-    // </div>
-    // </div>
   );
 };
 
