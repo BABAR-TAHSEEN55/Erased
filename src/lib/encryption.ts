@@ -1,7 +1,5 @@
 import * as crypto from "crypto";
 import { nanoid } from "nanoid";
-import dotenv from "dotenv";
-dotenv.config();
 
 function splitEncryptedText(encryptedText: string) {
   return {
