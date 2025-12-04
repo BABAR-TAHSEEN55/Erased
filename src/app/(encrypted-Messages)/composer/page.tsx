@@ -3,8 +3,17 @@
 import CommonComposer from "@/app/common/CommonComposer";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { AlertTriangle, Cpu, Lock, Terminal } from "lucide-react";
-import { useState } from "react";
+import {
+  AlertTriangle,
+  Check,
+  Copy,
+  Cpu,
+  Lock,
+  RefreshCw,
+  Terminal,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import QRCode from "react-qr-code";
 type EncryptionType = "AES-256-GCM" | "ChaCha20-Poly1305" | "Rabbit-Legacy";
 type ViewLimit = "1 (Burn)" | "5 Views" | "10 Views" | "Unlimited";
 type Expiration = "1 Hour" | "24 Hours" | "7 Days" | "Never";
@@ -25,6 +34,14 @@ const MessageComposer = () => {
   >("input");
   const [setttings, setSettings] = useState(InitialSettings);
   const [data, setData] = useState<{ GENERATE_URL: string }>();
+  const [consoleLog, setConsoleLog] = useState<string[]>([]);
+  const [copy, setCopy] = useState(false);
+
+  const HitReset = () => {
+    setMessage("");
+    setStep("input");
+    setConsoleLog([""]);
+  };
 
   const SendInput = async () => {
     await axios.post("/api/message", { input: message }).then((res) => {
@@ -32,6 +49,53 @@ const MessageComposer = () => {
       console.log(res.data);
     });
   };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(
+      `http://localhost:3000/composer/${data?.GENERATE_URL}`,
+    );
+    setCopy(true);
+
+    setTimeout(() => {
+      setCopy(false);
+    }, 3000);
+  };
+  useEffect(() => {
+    if (Step !== "processing") return;
+
+    const logs = [
+      "Initiating handshake...",
+      "Generating ephemeral keys...",
+      "Applying cipher...",
+      "Salting hash...",
+      "Allocating storage shard...",
+      "Link generated.",
+    ];
+
+    const delay = (ms: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+    let cancelled = false;
+
+    (async () => {
+      for (const log of logs) {
+        if (cancelled) return;
+
+        setConsoleLog((prev) => [...prev, `> ${log}`]);
+        await delay(1200);
+      }
+
+      await delay(500);
+
+      if (!cancelled) {
+        setStep("result");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [Step]);
 
   return (
     <div className="">
@@ -89,13 +153,25 @@ const MessageComposer = () => {
                 <Button
                   onClick={async () => {
                     await SendInput();
-                    setStep("result");
+                    setStep("processing");
                   }}
                   disabled={!message.trim()}
                   variant="secondary"
                 >
                   Configure Encryption
                 </Button>
+              </div>
+            </div>
+          )}
+          {Step === "processing" && (
+            <div className="flex flex-col items-center justify-center h-full gap-6 animate-in fade-in duration-300">
+              <RefreshCw className="w-12 h-12 text-neon-green animate-spin" />
+              <div className="w-full max-w-5xl bg-black border border-white/10 p-4 font-mono text-xs h-52 overflow-y-auto">
+                {consoleLog.map((log, i) => (
+                  <div key={i} className="text-green-500 mb-1">
+                    {log}
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -122,25 +198,43 @@ const MessageComposer = () => {
                   value={`http://localhost:3000/composer/${data?.GENERATE_URL}`}
                   className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded focus:outline-none focus:border-neon-green transition-colors"
                 />
-                {/*<button
-                    onClick={handleCopy}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded transition-colors"
-                  >
-                    {copied ? (
-                      <Check size={18} className="text-neon-green" />
-                    ) : (
-                      <Copy size={18} className="text-white/70" />
-                    )}
-                  </button>*/}
+                <button
+                  onClick={handleCopy}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded transition-colors"
+                >
+                  {copy ? (
+                    <Check size={18} className="text-neon-green" />
+                  ) : (
+                    <Copy size={18} className="text-white/70" />
+                  )}
+                </button>
               </div>
 
               <div className="flex gap-4">
-                <Button variant="secondary">Encrypt Another</Button>
+                <Button variant="secondary" onClick={HitReset}>
+                  Encrypt Another
+                </Button>
               </div>
 
               <div className="flex items-center gap-2 text-[10px] text-amber-500/80 font-mono bg-amber-500/10 px-3 py-2 rounded border border-amber-500/20">
                 <AlertTriangle size={12} />
                 WARNING: WE CANNOT RECOVER THIS MESSAGE IF THE LINK IS LOST.
+              </div>
+              <div
+                style={{
+                  height: "auto",
+                  margin: "0 auto",
+                  maxWidth: 200,
+                  width: "100%",
+                }}
+                className="border border-white/30 rounded-xl p-2"
+              >
+                <QRCode
+                  size={256}
+                  style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                  value={`http://localhost:3000/composer/${data?.GENERATE_URL}`}
+                  viewBox={`0 0 256 256`}
+                />
               </div>
             </div>
           )}

@@ -4,13 +4,13 @@ import { ArrowRight, FileLock2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const Hero: React.FC = () => {
+const Hero = () => {
   const scrollToComposer = () => {
     document.getElementById("composer")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden ">
+    <section className="relative min-h-screen flex items-center pt-10 md:pt-1 overflow-hidden ">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900/40 via-void to-void z-0" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-green/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse-slow" />
@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
         }}
       ></div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full mt-8">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full mt-">
         <div className="flex flex-col items-start md:items-center text-left md:text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-neon-green/5 border border-neon-green/20 backdrop-blur-md mb-8 animate-float mx-auto md:mb-8">
