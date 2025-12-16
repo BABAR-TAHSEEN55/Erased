@@ -2,38 +2,46 @@
 
 import CommonComposer from "@/app/common/CommonComposer";
 import { Button } from "@/components/ui/button";
+import { NewEncryption } from "@/lib/encryptionClient";
+import { PostBodyType } from "@/types/common";
 import axios from "axios";
 import {
   AlertTriangle,
   Check,
+  Clock,
   Copy,
   Cpu,
+  Eye,
   Lock,
   RefreshCw,
+  Shield,
   Terminal,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-type EncryptionType = "AES-256-GCM" | "ChaCha20-Poly1305" | "Rabbit-Legacy";
 type ViewLimit = "1 (Burn)" | "5 Views" | "10 Views" | "Unlimited";
+type EncryptionType = "AES-256-GCM" | "ChaCha20-Poly1305" | "Rabbit-Legacy";
 type Expiration = "1 Hour" | "24 Hours" | "7 Days" | "Never";
 const InitialSettings = {
-  encrytipn: "AES-256-GCM",
+  encryption: "AES-256-GCM",
   views: "1 (Burn)",
   expiration: "1 Hour",
 };
-type dataType = {
-  input: string;
-  GENERATE_URL: string;
-};
+// type dataType = {
+//   input: string;
+//   GENERATE_URL: string;
+// };
 
 const MessageComposer = () => {
   const [message, setMessage] = useState("");
   const [Step, setStep] = useState<
     "input" | "configure" | "processing" | "result"
   >("input");
-  const [setttings, setSettings] = useState(InitialSettings);
-  const [data, setData] = useState<{ GENERATE_URL: string }>();
+  const [settings, setSettings] = useState(InitialSettings);
+  const [data, setData] = useState<{
+    GENERATE_URL: string;
+    res: { GENERATE_URL: string };
+  }>();
   const [consoleLog, setConsoleLog] = useState<string[]>([]);
   const [copy, setCopy] = useState(false);
 
@@ -44,15 +52,26 @@ const MessageComposer = () => {
   };
 
   const SendInput = async () => {
-    await axios.post("/api/message", { input: message }).then((res) => {
-      setData(res.data);
-      console.log(res.data);
-    });
+    const resp = await NewEncryption(message);
+    try {
+      const payload: PostBodyType = {
+        input: message,
+        settings,
+        res: resp,
+      };
+
+      await axios.post("/api/message", payload).then((res) => {
+        setData(res.data);
+        console.log("Augemented", res.data);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(
-      `http://localhost:3000/composer/${data?.GENERATE_URL}`,
+      `http://localhost:3000/composer/${data?.res.GENERATE_URL}`,
     );
     setCopy(true);
 
@@ -152,8 +171,8 @@ const MessageComposer = () => {
                 </span>
                 <Button
                   onClick={async () => {
-                    await SendInput();
-                    setStep("processing");
+                    // await SendInput();
+                    setStep("configure");
                   }}
                   disabled={!message.trim()}
                   variant="secondary"
@@ -163,6 +182,121 @@ const MessageComposer = () => {
               </div>
             </div>
           )}
+
+          {Step === "configure" && (
+            <div className="flex flex-col gap-8 animate-in slide-in-from-end-translate-full duration-300 ">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Encryption Select */}
+                <div className="space-y-3">
+                  <label className="text-xs font-mono text-neon-green uppercase tracking-wider flex items-center gap-2">
+                    <Shield size={14} /> Encryption Algorithm
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {(
+                      [
+                        "AES-256-GCM",
+                        "ChaCha20-Poly1305",
+                        "Rabbit-Legacy",
+                      ] as EncryptionType[]
+                    ).map((type) => (
+                      <button
+                        key={type}
+                        onClick={async () => {
+                          setSettings({ ...settings, encryption: type });
+                          // await SendInput();
+                        }}
+                        className={`px-4 py-3 text-left text-xs font-mono border transition-all ${
+                          settings?.encryption === type
+                            ? "bg-neon-green/10 border-[#00ff41] text-[#00ff41]"
+                            : "bg-white/5 border-transparent text-white/50 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Views Select */}
+                <div className="space-y-3">
+                  <label className="text-xs font-mono text-neon-purple uppercase tracking-wider flex items-center gap-2">
+                    <Eye size={14} /> View Limit
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {(
+                      [
+                        "1 (Burn)",
+                        "5 Views",
+                        "10 Views",
+                        "Unlimited",
+                      ] as ViewLimit[]
+                    ).map((limit) => (
+                      <button
+                        key={limit}
+                        onClick={() =>
+                          setSettings({ ...settings, views: limit })
+                        }
+                        className={`px-4 py-3 text-left text-xs font-mono border transition-all ${
+                          settings.views === limit
+                            ? "bg-neon-purple/10 border-neon-purple text-neon-purple"
+                            : "bg-white/5 border-transparent text-white/50 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        {limit}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Expiration Select */}
+                <div className="space-y-3">
+                  <label className="text-xs font-mono text-neon-cyan uppercase tracking-wider flex items-center gap-2">
+                    <Clock size={14} /> Self-Destruct Timer
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {(
+                      ["1 Hour", "24 Hours", "7 Days", "Never"] as Expiration[]
+                    ).map((time) => (
+                      <button
+                        key={time}
+                        onClick={() =>
+                          setSettings({ ...settings, expiration: time })
+                        }
+                        className={`px-4 py-3 text-left text-xs font-mono border transition-all ${
+                          settings.expiration === time
+                            ? "bg-neon-cyan/10 border-neon-cyan text-neon-cyan"
+                            : "bg-white/5 border-transparent text-white/50 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-auto flex justify-between items-center border-t border-white/5 pt-6">
+                <button
+                  onClick={() => setStep("input")}
+                  className="text-xs font-mono text-white/50 hover:text-white uppercase tracking-wider"
+                >
+                  &lt; Back to Compose
+                </button>
+                <Button
+                  onClick={async () => {
+                    setStep("processing");
+                    await SendInput();
+                  }}
+                  // variant="primary"
+                  className="min-w-[200px]"
+                >
+                  Generate Secure Link
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/*{}*/}
           {Step === "processing" && (
             <div className="flex flex-col items-center justify-center h-full gap-6 animate-in fade-in duration-300">
               <RefreshCw className="w-12 h-12 text-neon-green animate-spin" />
@@ -195,8 +329,11 @@ const MessageComposer = () => {
               <div className="w-full max-w-lg relative">
                 <input
                   readOnly
-                  value={`http://localhost:3000/composer/${data?.GENERATE_URL}`}
-                  className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded focus:outline-none focus:border-neon-green transition-colors"
+                  value={`http://localhost:3000/composer/${data?.res.GENERATE_URL}`}
+                  className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded
+                          focus:outline-none focus:border-neon-green transition-colors
+                          overflow-hidden text-ellipsis whitespace-nowrap
+                          pr-10"
                 />
                 <button
                   onClick={handleCopy}
@@ -232,7 +369,7 @@ const MessageComposer = () => {
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                  value={`http://localhost:3000/composer/${data?.GENERATE_URL}`}
+                  value={`http://localhost:3000/composer/${data?.res.GENERATE_URL}`}
                   viewBox={`0 0 256 256`}
                 />
               </div>
