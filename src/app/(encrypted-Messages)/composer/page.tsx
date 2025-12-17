@@ -39,8 +39,8 @@ const MessageComposer = () => {
   >("input");
   const [settings, setSettings] = useState(InitialSettings);
   const [data, setData] = useState<{
-    GENERATE_URL: string;
-    res: { GENERATE_URL: string };
+    link?: string;
+    fullUrl: string;
   }>();
   const [consoleLog, setConsoleLog] = useState<string[]>([]);
   const [copy, setCopy] = useState(false);
@@ -55,7 +55,6 @@ const MessageComposer = () => {
     const resp = await NewEncryption(message);
     try {
       const payload: PostBodyType = {
-        input: message,
         settings,
         res: resp,
       };
@@ -71,7 +70,7 @@ const MessageComposer = () => {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(
-      `http://localhost:3000/composer/${data?.res.GENERATE_URL}`,
+      `http://localhost:3000/composer/${data?.fullUrl}`,
     );
     setCopy(true);
 
@@ -329,7 +328,7 @@ const MessageComposer = () => {
               <div className="w-full max-w-lg relative">
                 <input
                   readOnly
-                  value={`http://localhost:3000/composer/${data?.res.GENERATE_URL}`}
+                  value={`http://localhost:3000/composer/${data?.fullUrl}`}
                   className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded
                           focus:outline-none focus:border-neon-green transition-colors
                           overflow-hidden text-ellipsis whitespace-nowrap
@@ -369,7 +368,7 @@ const MessageComposer = () => {
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                  value={`http://localhost:3000/composer/${data?.res.GENERATE_URL}`}
+                  value={`http://localhost:3000/composer/${data?.fullUrl}`}
                   viewBox={`0 0 256 256`}
                 />
               </div>
