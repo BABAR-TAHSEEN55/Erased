@@ -1,3 +1,8 @@
+/*
+
+Depricated Encryption Algo
+New EncryptionClient is used
+*/
 import * as crypto from "crypto";
 import { nanoid } from "nanoid";
 
