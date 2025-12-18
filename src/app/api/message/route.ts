@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
     }
 
     // Use this
-    const encryptionType = settings.encryption;
+    // const encryptionType = settings.encryption;
     const maxViews = getMaxViewsHelper(settings.views);
     const expriration = getExpirationTime(settings.expiration);
 

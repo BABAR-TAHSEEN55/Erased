@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useEffectEvent } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -17,10 +17,12 @@ const MessageConfirmationModal = ({
 }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
 
+  const updateVisible = useEffectEvent(() => setIsVisible(true));
+
   // Handle entrance/exit animations
   useEffect(() => {
     if (isOpen) {
-      setIsVisible(true);
+      updateVisible();
     } else {
       const timer = setTimeout(() => setIsVisible(false), 300);
       return () => clearTimeout(timer);

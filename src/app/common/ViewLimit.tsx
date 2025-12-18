@@ -1,4 +1,4 @@
-import { EggFried, Terminal } from "lucide-react";
+import {  Terminal } from "lucide-react";
 import CommonComposer from "./CommonComposer";
 
 // Component for view limit exceeded
