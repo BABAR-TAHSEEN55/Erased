@@ -71,7 +71,7 @@ const MessageComposer = () => {
   const baseUrl = getBaseUrl();
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(`${baseUrl}/${data?.fullUrl}`);
+    await navigator.clipboard.writeText(`${baseUrl}/composer/${data?.fullUrl}`);
     setCopy(true);
 
     setTimeout(() => {
@@ -328,7 +328,7 @@ const MessageComposer = () => {
               <div className="w-full max-w-lg relative">
                 <input
                   readOnly
-                  value={`${baseUrl}/${data?.fullUrl}`}
+                  value={`${baseUrl}/composer/${data?.fullUrl}`}
                   className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded
                           focus:outline-none focus:border-neon-green transition-colors
                           overflow-hidden text-ellipsis whitespace-nowrap
@@ -368,7 +368,7 @@ const MessageComposer = () => {
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                  value={`${baseUrl}/${data?.fullUrl}`}
+                  value={`${baseUrl}/composer/${data?.fullUrl}`}
                   viewBox={`0 0 256 256`}
                 />
               </div>
