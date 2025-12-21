@@ -363,7 +363,7 @@ const MessageComposer = () => {
                   maxWidth: 200,
                   width: "100%",
                 }}
-                className="border border-white/30 rounded-xl p-2"
+                className=" border-white/30 rounded-xl p-2"
               >
                 <QRCode
                   size={256}
