@@ -2,6 +2,7 @@
 
 import CommonComposer from "@/app/common/CommonComposer";
 import { Button } from "@/components/ui/button";
+import { getBaseUrl } from "@/lib/config";
 import { NewEncryption } from "@/lib/encryptionClient";
 import { PostBodyType } from "@/types/common";
 import axios from "axios";
@@ -67,11 +68,10 @@ const MessageComposer = () => {
       console.log(err);
     }
   };
+  const baseUrl = getBaseUrl();
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(
-      `http://localhost:3000/composer/${data?.fullUrl}`,
-    );
+    await navigator.clipboard.writeText(`${baseUrl}/${data?.fullUrl}`);
     setCopy(true);
 
     setTimeout(() => {
@@ -328,7 +328,7 @@ const MessageComposer = () => {
               <div className="w-full max-w-lg relative">
                 <input
                   readOnly
-                  value={`http://localhost:3000/composer/${data?.fullUrl}`}
+                  value={`${baseUrl}/${data?.fullUrl}`}
                   className="w-full bg-black border border-white/20 text-neon-green font-mono text-sm py-4 px-6 rounded
                           focus:outline-none focus:border-neon-green transition-colors
                           overflow-hidden text-ellipsis whitespace-nowrap
@@ -368,7 +368,7 @@ const MessageComposer = () => {
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                  value={`http://localhost:3000/composer/${data?.fullUrl}`}
+                  value={`${baseUrl}/${data?.fullUrl}`}
                   viewBox={`0 0 256 256`}
                 />
               </div>

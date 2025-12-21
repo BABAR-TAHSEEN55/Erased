@@ -12,7 +12,7 @@ const ICE_SERVERS = {
 class WebRTCPeerConnection {
   private peerConnection: RTCPeerConnection;
   private dataChannel: RTCDataChannel | null = null;
-  private isSender: boolean;
+  public isSender: boolean;
 
   constructor(isSender: boolean = true) {
     this.isSender = isSender;
@@ -149,3 +149,5 @@ class WebRTCPeerConnection {
 }
 
 export default WebRTCPeerConnection;
+
+// TODO: DIY and from hussain again
