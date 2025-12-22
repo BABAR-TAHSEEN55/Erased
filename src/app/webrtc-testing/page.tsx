@@ -73,7 +73,7 @@ const WebRtcTesting = () => {
     if (socket.connected) {
       onConnect();
     }
-  }, []);
+  }, [socket]);
 
   const createSender = () => {
     console.log("Creating sender (offerer)...");
