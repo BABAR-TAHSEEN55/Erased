@@ -1,6 +1,7 @@
 "use client";
 
 import CommonComposer from "@/app/common/CommonComposer";
+import QRContainer from "@/app/common/QRContainer";
 import { Button } from "@/components/ui/button";
 import { getBaseUrl } from "@/lib/config";
 import { NewEncryption } from "@/lib/encryptionClient";
@@ -19,7 +20,7 @@ import {
   Terminal,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
+// import QRCode from "react-qr-code";
 type ViewLimit = "1 (Burn)" | "5 Views" | "10 Views" | "Unlimited";
 type EncryptionType = "AES-256-GCM" | "AES-CTR" | "PBKDF2-HMAC";
 type Expiration = "1 Hour" | "24 Hours" | "7 Days" | "Never";
@@ -28,12 +29,9 @@ const InitialSettings = {
   views: "1 (Burn)",
   expiration: "1 Hour",
 };
-// type dataType = {
-//   input: string;
-//   GENERATE_URL: string;
-// };
 
 const MessageComposer = () => {
+  const [qrState, setQr] = useState(false);
   const [message, setMessage] = useState("");
   const [Step, setStep] = useState<
     "input" | "configure" | "processing" | "result"
@@ -46,6 +44,9 @@ const MessageComposer = () => {
   const [consoleLog, setConsoleLog] = useState<string[]>([]);
   const [copy, setCopy] = useState(false);
 
+  const QRToggle = () => {
+    setQr((prev) => !prev);
+  };
   const HitReset = () => {
     setMessage("");
     setStep("input");
@@ -116,8 +117,8 @@ const MessageComposer = () => {
   }, [Step]);
 
   return (
-    <div className="">
-      <div className="max-w-5xl mx-auto mt-8 md:mt-15 px-6 relative z-10">
+    <div>
+      <div className="max-w-5xl mx-auto mt-8 md:mt-10 px-6 relative z-10">
         {/* Header */}
         <div className="mb-10 text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded bg-white/5 border border-white/10">
@@ -164,7 +165,7 @@ const MessageComposer = () => {
                 <span className="text-xs md:text-lg font-mono text-white/30 flex items-center gap-2">
                   <Cpu
                     size={14}
-                    className="md:size-[35px] hover:text-emerald-400"
+                    className="md:size-[25px] hover:text-emerald-400"
                   />
                   {message.length} CHARS
                 </span>
@@ -175,6 +176,10 @@ const MessageComposer = () => {
                   }}
                   disabled={!message.trim()}
                   variant="secondary"
+                  size={"sm"}
+                  className="md:h-9 md:px-4 md:py-2 md:has-[>svg]:px-3"
+                  // size={"lg"}
+                  // className="h-8  gap-1.5 px-3 has-[>svg]:px-2.5"
                 >
                   Configure Encryption
                 </Button>
@@ -286,10 +291,14 @@ const MessageComposer = () => {
                     setStep("processing");
                     await SendInput();
                   }}
-                  // variant="primary"
-                  className="min-w-[200px]"
+                  size={"xs"}
+                  className="md:h-9 md:px-4 md:py-2 md:has-[>svg]:px-3"
                 >
-                  Generate Secure Link
+                  {settings.encryption === "PBKDF2-HMAC" ? (
+                    <span>Configure Password</span>
+                  ) : (
+                    <span>Generate Secure Link</span>
+                  )}
                 </Button>
               </div>
             </div>
@@ -350,28 +359,108 @@ const MessageComposer = () => {
                 <Button variant="secondary" onClick={HitReset}>
                   Encrypt Another
                 </Button>
+                <Button variant="default" onClick={QRToggle}>
+                  Show QR Code{" "}
+                </Button>
+                {qrState && (
+                  <QRContainer
+                    value={`${baseUrl}/composer/${data?.fullUrl}`}
+                    onClose={() => setQr(false)}
+                  />
+                )}
               </div>
 
               <div className="flex items-center gap-2 text-[10px] text-amber-500/80 font-mono bg-amber-500/10 px-3 py-2 rounded border border-amber-500/20">
                 <AlertTriangle size={12} />
                 WARNING: WE CANNOT RECOVER THIS MESSAGE IF THE LINK IS LOST.
               </div>
-              <div
+              {/*<div
                 style={{
                   height: "auto",
                   margin: "0 auto",
-                  maxWidth: 200,
-                  width: "100%",
+                  width: 200,
+                  padding: 12,
+                  background: "#ffffff",
+                  borderRadius: 12,
                 }}
-                className=" border-white/30 rounded-xl p-2"
+                className="rounded-xl flex flex-col items-center"
               >
                 <QRCode
-                  size={256}
-                  style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                  size={200}
+                  style={{
+                    height: "auto",
+                    maxWidth: "200px",
+                    width: "100%",
+                    display: "block",
+                    shapeRendering: "crispEdges",
+                  }}
                   value={`${baseUrl}/composer/${data?.fullUrl}`}
-                  viewBox={`0 0 256 256`}
-                />
-              </div>
+                  viewBox={`0 0 200 200`}
+                  fgColor="#000000"
+                  bgColor="#ffffff"
+                  level="H"
+                />*/}
+
+              {/*<button
+                  onClick={async () => {
+                    try {
+                      const svg = document.querySelector(
+                        "#qr-container svg",
+                      ) as SVGSVGElement | null;
+                      if (!svg) return;
+
+                      // Serialize SVG
+                      const serializer = new XMLSerializer();
+                      const svgString = serializer.serializeToString(svg);
+
+                      // Make blob and object URL
+                      const blob = new Blob([svgString], {
+                        type: "image/svg+xml;charset=utf-8",
+                      });
+                      const url = URL.createObjectURL(blob);
+
+                      // Draw to canvas then export as PNG
+                      const img = new Image();
+                      img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        canvas.width = 200;
+                        canvas.height = 200;
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) {
+                          URL.revokeObjectURL(url);
+                          return;
+                        }
+                        // Fill white background to ensure quiet zone in PNG
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        URL.revokeObjectURL(url);
+
+                        canvas.toBlob((pngBlob) => {
+                          if (!pngBlob) return;
+                          const pngUrl = URL.createObjectURL(pngBlob);
+                          const a = document.createElement("a");
+                          a.href = pngUrl;
+                          a.download = "vanix-qrcode.png";
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                          URL.revokeObjectURL(pngUrl);
+                        }, "image/png");
+                      };
+                      img.onerror = () => {
+                        URL.revokeObjectURL(url);
+                      };
+                      img.src = url;
+                    } catch (err) {
+                      console.error("QR download error:", err);
+                    }
+                  }}
+                  className="mt-3 px-3 py-1 text-xs rounded bg-white/10 hover:bg-white/20 transition-colors text-white"
+                >
+                  Download PNG
+                </button>*/}
+              {/*</div>*/}
             </div>
           )}
         </CommonComposer>
