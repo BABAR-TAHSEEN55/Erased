@@ -15,7 +15,7 @@ const Footer = () => {
             <div className="flex items-center gap-2 mb-6">
               <Terminal className="text-neon-green w-6 h-6" />
               <h2 className="text-2xl font-mono font-bold tracking-widest text-white">
-                ERASED
+                VANIX
               </h2>
             </div>
             <p className="max-w-sm text-neutral-500 mb-8 font-light leading-relaxed">
@@ -27,7 +27,7 @@ const Footer = () => {
               {[Github, Shield, Lock].map((Icon, i) => (
                 <Link
                   key={i}
-                  href="#"
+                  href="https://github.com/BABAR-TAHSEEN55/Vanix"
                   className="w-10 h-10 flex items-center justify-center border border-white/10 bg-white/5 text-neutral-400 hover:border-neon-green hover:text-neon-green transition-all hover:scale-110"
                 >
                   <Icon size={18} />
@@ -44,7 +44,7 @@ const Footer = () => {
               {["Source Code", "PGP Keys", "Tor Onion Service"].map((item) => (
                 <li key={item}>
                   <Link
-                    href="#"
+                    href="https://github.com/BABAR-TAHSEEN55/vanix"
                     className="text-neutral-500 hover:text-white transition-colors text-sm font-mono flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 bg-neutral-700 group-hover:bg-neon-green rounded-full transition-colors"></span>

@@ -6,7 +6,7 @@ const Year = () => {
     <span>
       {`
 
-	// EST. ${GetCurrentYear} SHADOW_DROP PROTOCOL // NO RIGHTS RESERVED // COPYLEFT
+	// EST. ${GetCurrentYear}  VANIX PROTOCOL //  ALL RIGHTS RESERVED
 	`}{" "}
     </span>
   );

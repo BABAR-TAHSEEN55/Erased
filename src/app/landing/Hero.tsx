@@ -44,7 +44,7 @@ const Hero = () => {
           </h1>
 
           {/* Subtext */}
-          <p className="max-w-3xl text-lg md:text-xl text-neutral-400 mb-10 leading-relaxed font-light  text-center flex flex-col">
+          <p className="max-w-3xl text-lg md:text-xl text-neutral-400 mb-10 leading-relaxed font-light  text-center flex flex-col md:py-2">
             <span>
               <span className="text-neon-purple font-mono">&gt;</span>{" "}
               Peer-to-peer document sharing and ephemeral messaging.
@@ -68,10 +68,15 @@ const Hero = () => {
               <ArrowRight size={18} />
               <Link href={"/composer"}>Start Encrypted Session</Link>
             </Button>
-            <Button variant="custom" size="lg" className="w-full sm:w-auto">
-              <FileLock2 size={18} />
-              View Source Code
-            </Button>
+            <Link
+              href={"https://github.com/BABAR-TAHSEEN55/Vanix"}
+              className="w-full"
+            >
+              <Button variant="custom" size="lg" className="w-full sm:w-auto">
+                <FileLock2 size={18} />
+                View Source Code
+              </Button>
+            </Link>
           </div>
 
           {/* Terminal/Stats Area */}
