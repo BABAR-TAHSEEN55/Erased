@@ -72,9 +72,14 @@ const Hero = () => {
               href={"https://github.com/BABAR-TAHSEEN55/Vanix"}
               className="w-full"
             >
-              <Button variant="custom" size="lg" className="w-full sm:w-auto">
+              <Button
+                variant="custom"
+                size="lg"
+                className="w-full sm:w-auto tracking-wider"
+              >
                 <FileLock2 size={18} />
-                View Source Code
+                {/*View Source Code*/}
+                Transfer File
               </Button>
             </Link>
           </div>
