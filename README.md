@@ -1,3 +1,5 @@
+
+
 # Vanix
 
 **Silence is Currency** — End-to-end encrypted ephemeral messaging platform
@@ -33,8 +35,8 @@ Vanix is a cyberpunk-themed, end-to-end encrypted messaging platform that priori
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/your-username/vanix.git
-    cd vanix
+    git clone https://github.com/BABAR-TAHSEEN55/Vanix.git
+    cd Vanix
     ```
 
 2. **Install dependencies**
